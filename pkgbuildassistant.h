@@ -18,11 +18,13 @@
 #include <QTableWidget>
 #include <QHeaderView>
 #include <QMessageBox>
-#include <QTreeWidget>
-#include <QTreeWidgetItem>
+#include <QTextBrowser>
 #include <QGroupBox>
 #include <QDebug>
 
+#include "dialogfilecopy.h"
+#include "dialogfiledelete.h"
+#include "dialogfilechmod.h"
 
 
 QT_BEGIN_NAMESPACE
@@ -59,6 +61,8 @@ public:
     QGridLayout* layout_relationsTab;
     QLineEdit *le_provides;
     QLineEdit *le_conflicts;
+    QLineEdit *le_maintainerName;
+    QLineEdit *le_maintainerEmail;
 
 
     QGridLayout *layout_dependsTab;
@@ -76,10 +80,10 @@ public:
     QGroupBox *group_trees;
     QGroupBox *group_preview;
     QLineEdit *le_fakeDirPath;
-    QLineEdit *le_debPath;
+    QLineEdit *le_archPath;
     QTextEdit *le_preview;
-    QTreeWidget *tree_source;
-    QTreeWidget *tree_pkg;
+    QTextBrowser *tree_source;
+    QTextBrowser *tree_pkg;
 
 
     QVBoxLayout *layout_createTab;
@@ -87,11 +91,18 @@ public:
     QTextEdit *le_savePreview;
     QGroupBox *group_savePreview;
 
+    QByteArray pkgBuf;
+
     void scanSoFiles();
     QString scanPackageNames(QString filename);
+    void decompress(QString fileName);
+    void updateTree();
+    bool copyDirectoryFiles(const QString &fromDir, const QString &toDir);
+    bool DeleteDirectory(const QString &path);
     void createFile();
 
 public slots:
+    void slotAddOperation(QString operation);
 
 private:
     Ui::PKGBUILDASSISTANT *ui;
