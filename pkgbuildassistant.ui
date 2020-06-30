@@ -21,7 +21,7 @@
        <enum>QTabWidget::West</enum>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>6</number>
       </property>
       <widget class="QWidget" name="tab_baseinfo">
        <attribute name="title">
@@ -51,6 +51,11 @@
       <widget class="QWidget" name="tab_create">
        <attribute name="title">
         <string>Make</string>
+       </attribute>
+      </widget>
+      <widget class="QWidget" name="tab_check">
+       <attribute name="title">
+        <string>Check</string>
        </attribute>
       </widget>
      </widget>

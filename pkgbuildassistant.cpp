@@ -405,7 +405,7 @@ PKGBUILDASSISTANT::PKGBUILDASSISTANT(QWidget *parent)
 
     QHBoxLayout *hlay_saveFile = new QHBoxLayout;
     QPushButton *btn_saveFile = new QPushButton("Choose");
-    hlay_saveFile->addWidget(new QLabel("File Save Dir:"));
+    hlay_saveFile->addWidget(new QLabel("PKGBUILD Save Dir:"));
     hlay_saveFile->addWidget(le_savePath);
     hlay_saveFile->addWidget(btn_saveFile);
     layout_createTab->addLayout(hlay_saveFile);
@@ -492,6 +492,40 @@ PKGBUILDASSISTANT::PKGBUILDASSISTANT(QWidget *parent)
     });
 
 
+
+    /* Check Tab */
+    layout_checkTab = new QVBoxLayout(ui->tab_check);
+    group_checkBtns = new QGroupBox;
+    le_checkLog = new QTextEdit;
+
+    layout_checkTab->addWidget(group_checkBtns);
+    layout_checkTab->addWidget(le_checkLog);
+
+    QHBoxLayout *hlay_checkBtns = new QHBoxLayout(group_checkBtns);
+    QPushButton *btn_checkBuild = new QPushButton("Build");
+    QPushButton *btn_checkCheck = new QPushButton("Check");
+
+    hlay_checkBtns->addStretch();
+    hlay_checkBtns->addWidget(btn_checkBuild);
+    hlay_checkBtns->addStretch();
+    hlay_checkBtns->addWidget(btn_checkCheck);
+    hlay_checkBtns->addStretch();
+
+    le_checkLog->setReadOnly(true);
+
+    connect(btn_checkBuild, &QPushButton::clicked, [=](){
+        if(le_savePath->text().isEmpty())
+        {
+            QMessageBox::critical(this, "Build Error","Please choose a location to save PKGBUILD at Make TAB at first.");
+
+            return;
+        }
+
+        buildFile();
+    });
+
+    connect(btn_checkCheck, &QPushButton::clicked, this, &PKGBUILDASSISTANT::checkPkg);
+
 }
 
 PKGBUILDASSISTANT::~PKGBUILDASSISTANT()
@@ -540,21 +574,6 @@ void PKGBUILDASSISTANT::insertPackageNames(QStringList pkgList)
 
         table_depends->setItem(i,1,pkgNames);
     }
-}
-
-QString PKGBUILDASSISTANT::scanPackageNames(QString filename)
-{
-    QProcess process;
-
-    process.start(tr("pacman -Fx %1").arg(filename));
-
-    process.waitForFinished();
-
-    QByteArray buf = process.readAllStandardOutput();
-
-    QString ret(buf);
-
-    return buf;
 }
 
 void PKGBUILDASSISTANT::decompress(QString fileName)
@@ -1186,7 +1205,7 @@ void PKGBUILDASSISTANT::checkFile()
 
     if(!currentDir.exists("PKGBUILD"))
     {
-        QMessageBox::critical(this,"Check Error","Can't check PKGBUILD!");
+        QMessageBox::critical(this,"Check Error","Can't find PKGBUILD!");
         return;
     }
 
@@ -1235,7 +1254,205 @@ void PKGBUILDASSISTANT::checkFile()
 
 }
 
+void PKGBUILDASSISTANT::readStandardOutput()
+{
+    QString outStr = QString::fromLocal8Bit(makepkg->readAllStandardOutput());
+    qDebug()<<"output: "<<outStr;
+}
+
+void PKGBUILDASSISTANT::readStandardError()
+{
+    QString outStr = QString::fromLocal8Bit(makepkg->readAllStandardError());
+    erroList<<outStr;
+    qDebug()<<"error: "<<outStr;
+}
+
+void PKGBUILDASSISTANT::buildFile()
+{
+    le_checkLog->append("Start makepkg...");
+
+    QString currentDirName = le_savePath->text().mid(0, le_savePath->text().lastIndexOf('/'));
+    QDir currentDir(currentDirName);
+    qDebug()<<"currentDirName:"<<currentDirName;
+
+    if(!currentDir.exists("PKGBUILD"))
+    {
+        QMessageBox::critical(this,"Build Error","Can't find PKGBUILD!");
+
+        le_checkLog->append("Build error, can't find PKGBUILD!");
+
+        le_checkLog->append("Stop build.");
+
+        isBuildSuccess = false;
+
+        return;
+    }
+
+    if(currentDir.exists(tr("%1-%2-%3-%4.pkg.tar.xz").arg(le_pkgname->text().trimmed()).arg(le_pkgver->text().trimmed()).arg(le_pkgrel->text().trimmed()).arg(le_arch->text().trimmed())))
+    {
+        currentDir.remove(tr("%1-%2-%3-%4.pkg.tar.xz").arg(le_pkgname->text().trimmed()).arg(le_pkgver->text().trimmed()).arg(le_pkgrel->text().trimmed()).arg(le_arch->text().trimmed()));
+    }
+
+    ui->statusbar->showMessage("Start build PKGBUILD...");
+
+    makepkg = new QProcess(this);
+
+    makepkg->setWorkingDirectory(currentDirName);
+
+
+    connect(makepkg, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),[=](int exitCode, QProcess::ExitStatus exitStatus)
+    {
+        Q_UNUSED(exitCode);
+        Q_UNUSED(exitStatus);
+        qDebug()<<"finished";
+
+        qDebug()<<tr("%1-%2-%3-%4.pkg.tar.xz").arg(le_pkgname->text().trimmed()).arg(le_pkgver->text().trimmed()).arg(le_pkgrel->text().trimmed()).arg(le_arch->text().trimmed());
+        if(currentDir.exists(tr("%1-%2-%3-%4.pkg.tar.xz").arg(le_pkgname->text().trimmed()).arg(le_pkgver->text().trimmed()).arg(le_pkgrel->text().trimmed()).arg(le_arch->text().trimmed())))
+        {
+            le_checkLog->append("Build Success!");
+
+            ui->statusbar->showMessage("Build PKGBUILD success",1000);
+
+            isBuildSuccess = true;
+
+        }
+        else
+        {
+            le_checkLog->append("Build Error!");
+            le_checkLog->append(tr("Last Error:\n%1%2").arg(erroList.at(erroList.size()-1)).arg(erroList.at(erroList.size()-2)));
+
+            ui->statusbar->showMessage("Build Error",1000);
+
+            isBuildSuccess = false;
+
+        }
+        //qDebug()<<erroList;
+    });
+    connect(makepkg,&QProcess::readyReadStandardOutput,this, &PKGBUILDASSISTANT::readStandardOutput);
+    connect(makepkg,&QProcess::readyReadStandardError, this, &PKGBUILDASSISTANT::readStandardError);
+
+    makepkg->start("makepkg -f");
+
+    //makepkg->waitForFinished(60000);
+
+    //qDebug()<<"error:"<<makepkg->readAllStandardError().data();
+    //qDebug()<<"output:"<<makepkg->readAllStandardOutput().data();
+
+}
+
 void PKGBUILDASSISTANT::checkPkg()
 {
+    le_checkLog->append("Start build check..");
 
+    if(!isBuildSuccess)
+    {
+        QMessageBox::critical(this, "Error", "Please build PKGBUILD at first.");
+
+        return;
+    }
+
+    ui->statusbar->showMessage("Start check build...");
+
+    QString currentDirName = le_savePath->text().mid(0, le_savePath->text().lastIndexOf('/'));
+    QDir currentDir(currentDirName);
+    qDebug()<<"currentDirName:"<<currentDirName;
+
+    // Run namcap
+    QProcess namcap;
+    namcap.setWorkingDirectory(currentDirName);
+    namcap.start(tr("namcap -m %1-%2-%3-%4.pkg.tar.xz").arg(le_pkgname->text().trimmed()).arg(le_pkgver->text().trimmed()).arg(le_pkgrel->text().trimmed()).arg(le_arch->text().trimmed()));
+
+    namcap.waitForFinished();
+
+    qDebug()<<"namcap";
+    QByteArray retBuf = namcap.readAll();
+    QString ret(retBuf);
+    qDebug()<<retBuf.data();
+
+    ui->statusbar->showMessage("Build checked finished.",2000);
+
+    le_checkLog->append("Build checked finished.\n");
+
+    le_checkLog->append(ret);
+
+    // Loop Output
+    QStringList satisfiedDependcyList;
+
+    int errorNum = 0; //count errors
+    int warningNum = 0; //count warnings
+
+    int countReturn = ret.count('\n');
+    qDebug()<<"countReturn:"<<countReturn;
+    for(int i=0; i<countReturn; ++i)
+    {
+        QString currentStr = ret.section("\n",i,i);
+        qDebug()<<"currentStr:"<<currentStr;
+        QString type = currentStr.section(" ",1,1);
+        qDebug()<<"type:"<<type;
+        if(type=="E:")
+        {
+            errorNum++;
+        }
+        if(type=="W:")
+        {
+            warningNum++;
+        }
+
+        qDebug()<<currentStr.section(" ",2,2);
+        if(currentStr.section(" ",2,2)=="dependency-already-satisfied")
+        {
+            satisfiedDependcyList<<currentStr.section(" ",3,3).trimmed();
+        }
+    }
+
+    qDebug()<<satisfiedDependcyList.size();
+    // Remove Satisfied Depends
+    if(!satisfiedDependcyList.isEmpty())
+    {
+        QString satisfiedDepencyStr;
+        for(int i=0; i<satisfiedDependcyList.size(); ++i)
+        {
+            satisfiedDepencyStr+=satisfiedDependcyList.at(i)+"\n";
+        }
+
+        int ret = QMessageBox::question(this,"Confirming",tr("There are %1 packages that are already satisfied, do you want to remove them from depends?\nThese packages:%2").arg(satisfiedDependcyList.size()).arg(satisfiedDepencyStr.trimmed()));
+
+        if(ret == QMessageBox::Yes)
+        {
+            QString oldDependsStr = le_depends->toPlainText();
+
+            for(int i=0; i<satisfiedDependcyList.size(); ++i)
+            {
+                oldDependsStr.remove(satisfiedDependcyList.at(i));
+            }
+
+            QString newDependsStr;
+
+            int returnCount = 0;
+            returnCount = oldDependsStr.count("\n");
+            qDebug()<<returnCount;
+            for(int i=0; i<returnCount; ++i)
+            {
+                QString currentStr = oldDependsStr.section("\n",i,i);
+                qDebug()<<currentStr;
+                if(currentStr=="")
+                {
+                    continue;
+                }
+                else
+                {
+                    newDependsStr+=currentStr+"\n";
+                }
+            }
+
+            newDependsStr = newDependsStr.trimmed();
+
+            qDebug()<<oldDependsStr;
+            qDebug()<<newDependsStr;
+
+            le_depends->setText(newDependsStr);
+        }
+    }
+
+    ui->statusbar->showMessage(tr("Build checked. There are %1 ERRORS and %2 WARNINGS.").arg(errorNum).arg(warningNum));
 }

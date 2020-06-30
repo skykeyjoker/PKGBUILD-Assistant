@@ -95,6 +95,13 @@ public:
 
     QByteArray pkgBuf;
 
+    QVBoxLayout *layout_checkTab;
+    QGroupBox *group_checkBtns;
+    QTextEdit *le_checkLog;
+    QProcess *makepkg;
+    bool isBuildSuccess = false;
+    QStringList erroList;
+
     void scanSoFiles();
     QString scanPackageNames(QString filename);
     void decompress(QString fileName);
@@ -102,14 +109,15 @@ public:
     bool copyDirectoryFiles(const QString &fromDir, const QString &toDir);
     bool DeleteDirectory(const QString &path);
     void createFile();
-
+    void buildFile();
     void checkFile();
-
     void checkPkg();
 
 public slots:
     void slotAddOperation(QString operation);
     void insertPackageNames(QStringList pkgNameList);
+    void readStandardOutput();
+    void readStandardError();
 private:
     Ui::PKGBUILDASSISTANT *ui;
 };
