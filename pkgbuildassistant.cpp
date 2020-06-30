@@ -23,22 +23,22 @@ PKGBUILDASSISTANT::PKGBUILDASSISTANT(QWidget *parent)
     le_url = new QLineEdit;
 
 
-    layout_baseinfoTab->addWidget(new QLabel("包名:"),0,0);
+    layout_baseinfoTab->addWidget(new QLabel("PkgName:"),0,0);
     layout_baseinfoTab->addWidget(le_pkgname,0,1);
 
-    layout_baseinfoTab->addWidget(new QLabel("版本号:"),1,0);
+    layout_baseinfoTab->addWidget(new QLabel("PkgVer:"),1,0);
     layout_baseinfoTab->addWidget(le_pkgver,1,1);
 
-    layout_baseinfoTab->addWidget(new QLabel("发布号:"),2,0);
+    layout_baseinfoTab->addWidget(new QLabel("PkgRel:"),2,0);
     layout_baseinfoTab->addWidget(le_pkgrel,2,1);
 
-    layout_baseinfoTab->addWidget(new QLabel("包描述:"),3,0);
+    layout_baseinfoTab->addWidget(new QLabel("PkgDesc:"),3,0);
     layout_baseinfoTab->addWidget(le_pkgdesc,3,1);
 
-    layout_baseinfoTab->addWidget(new QLabel("架构:"),4,0);
+    layout_baseinfoTab->addWidget(new QLabel("PkgArch:"),4,0);
     layout_baseinfoTab->addWidget(le_arch,4,1);
 
-    layout_baseinfoTab->addWidget(new QLabel("网址:"),5,0);
+    layout_baseinfoTab->addWidget(new QLabel("PkgUrl:"),5,0);
     layout_baseinfoTab->addWidget(le_url,5,1);
 
 
@@ -53,17 +53,17 @@ PKGBUILDASSISTANT::PKGBUILDASSISTANT(QWidget *parent)
     radio_sha512sums = new QRadioButton("sha512sums");
     le_sum = new QTextEdit;
 
-    layout_sourceTab->addWidget(new QLabel("源链接:"),0,0);
+    layout_sourceTab->addWidget(new QLabel("Source:"),0,0);
     layout_sourceTab->addWidget(le_source,0,1);
 
-    layout_sourceTab->addWidget(new QLabel("校验方式:"),1,0);
+    layout_sourceTab->addWidget(new QLabel("Sums:"),1,0);
     layout_sourceTab->addLayout(hlayout_radios,1,1);
     hlayout_radios->addWidget(radio_md5sums);
     hlayout_radios->addWidget(radio_sha1sums);
     hlayout_radios->addWidget(radio_sha256sums);
     hlayout_radios->addWidget(radio_sha512sums);
 
-    layout_sourceTab->addWidget(new QLabel("校验和:"),2,0);
+    layout_sourceTab->addWidget(new QLabel("Sums:"),2,0);
     layout_sourceTab->addWidget(le_sum,2,1);
 
     radio_md5sums->setChecked(true);
@@ -79,16 +79,16 @@ PKGBUILDASSISTANT::PKGBUILDASSISTANT(QWidget *parent)
     le_provides = new QLineEdit;
     le_conflicts = new QLineEdit;
 
-    layout_relationsTab->addWidget(new QLabel("打包者姓名:"),0,0);
+    layout_relationsTab->addWidget(new QLabel("Maintainer Name:"),0,0);
     layout_relationsTab->addWidget(le_maintainerName,0,1);
 
-    layout_relationsTab->addWidget(new QLabel("打包者邮箱:"),1,0);
+    layout_relationsTab->addWidget(new QLabel("Maintainer Email:"),1,0);
     layout_relationsTab->addWidget(le_maintainerEmail,1,1);
 
-    layout_relationsTab->addWidget(new QLabel("提供功能:"),2,0);
+    layout_relationsTab->addWidget(new QLabel("Provides:"),2,0);
     layout_relationsTab->addWidget(le_provides,2,1);
 
-    layout_relationsTab->addWidget(new QLabel("冲突:"),3,0);
+    layout_relationsTab->addWidget(new QLabel("Conflicts:"),3,0);
     layout_relationsTab->addWidget(le_conflicts,3,1);
 
 
@@ -101,25 +101,25 @@ PKGBUILDASSISTANT::PKGBUILDASSISTANT(QWidget *parent)
     le_depends = new QTextEdit;
     le_optdepends = new QTextEdit;
 
-    QPushButton *btn_dependsDir = new QPushButton("选择库目录");
-    QPushButton *btn_scanDepends = new QPushButton("分析库依赖");
+    QPushButton *btn_dependsDir = new QPushButton("Choose");
+    QPushButton *btn_scanDepends = new QPushButton("Analyse");
 
-    layout_dependsTab->addWidget(new QLabel("链接库目录:"),0,0);
+    layout_dependsTab->addWidget(new QLabel("Lib Dir:"),0,0);
     layout_dependsTab->addWidget(le_dependsDir,0,1);
     layout_dependsTab->addWidget(btn_dependsDir,0,2);
     layout_dependsTab->addWidget(btn_scanDepends,0,3);
 
-    layout_dependsTab->addWidget(new QLabel("库文件:"),1,0);
+    layout_dependsTab->addWidget(new QLabel("Libs:"),1,0);
     layout_dependsTab->addWidget(table_depends,1,1,1,3);
 
-    layout_dependsTab->addWidget(new QLabel("依赖:"),2,0);
+    layout_dependsTab->addWidget(new QLabel("Depends:"),2,0);
     layout_dependsTab->addWidget(le_depends,2,1,1,3);
 
-    layout_dependsTab->addWidget(new QLabel("可选依赖:"),3,0);
+    layout_dependsTab->addWidget(new QLabel("OptDepends:"),3,0);
     layout_dependsTab->addWidget(le_optdepends,3,1,1,3);
 
     table_depends->setColumnCount(2);
-    table_depends->setHorizontalHeaderLabels(QStringList()<<"文件名"<<"依赖");
+    table_depends->setHorizontalHeaderLabels(QStringList()<<"File Name"<<"Pkg Names");
 
     table_depends->setColumnWidth(0,140);
     table_depends->setColumnWidth(1,180);
@@ -130,7 +130,7 @@ PKGBUILDASSISTANT::PKGBUILDASSISTANT(QWidget *parent)
     le_optdepends->setPlaceholderText("pkg1\npkg2\npkg3\n");
 
     connect(btn_dependsDir, &QPushButton::clicked, [=](){
-        QString dir = QFileDialog::getExistingDirectory(this,"选择包库目录");
+        QString dir = QFileDialog::getExistingDirectory(this,"Choose Libs Dir");
         if(!dir.isEmpty())
         {
             le_dependsDir->setText(dir);
@@ -144,11 +144,12 @@ PKGBUILDASSISTANT::PKGBUILDASSISTANT(QWidget *parent)
     connect(btn_scanDepends, &QPushButton::clicked, [=](){
         if(!le_dependsDir->text().isEmpty())
         {
-            int ret = QMessageBox::question(this,"请求确认","即将开始查询lib文件包名，程序可能会卡死较长时间，请耐心等待!");
+            int ret = QMessageBox::question(this,"Confirming","Quering packages names will start straight away, and it may cost a long time, please be patient.");
 
             // Query the package name
             if(ret == QMessageBox::Yes)
-            {for(int i=0; i<list_so.size(); i++)
+            {
+                /*for(int i=0; i<list_so.size(); i++)
                 {
                     QString pkgname = scanPackageNames(list_so.at(i));
                     qDebug()<<pkgname;
@@ -157,12 +158,30 @@ PKGBUILDASSISTANT::PKGBUILDASSISTANT(QWidget *parent)
                     itemPackage->setText(pkgname);
 
                     table_depends->setItem(i,1,itemPackage);
-                }
+                }*/
+                QThread *thread_query = new QThread;
+                PackageQueryThread *queryThread = new PackageQueryThread;
+                queryThread->setFileName(list_so);
+                queryThread->moveToThread(thread_query);
+
+                // Start Thread
+                connect(thread_query, &QThread::started, queryThread, &PackageQueryThread::startWork);
+
+
+                // Destroy Thread
+                void (PackageQueryThread::*pRet)(QStringList) = &PackageQueryThread::ret;
+                void (PKGBUILDASSISTANT::*pInsertPackageNames)(QStringList) = &PKGBUILDASSISTANT::insertPackageNames;
+                connect(queryThread, pRet, this, pInsertPackageNames);
+                connect(queryThread, &PackageQueryThread::workFinished, queryThread, &PackageQueryThread::deleteLater);
+                connect(queryThread, &PackageQueryThread::destroyed, thread_query, &QThread::quit);
+                connect(thread_query, &QThread::finished, thread_query, &QThread::deleteLater);
+
+                thread_query->start();
             }
         }
         else
         {
-            QMessageBox::critical(this,"错误！","请选择库文件目录后再进行选择!");
+            QMessageBox::critical(this,"Wrong!","Please choose a Libs dir at first!");
         }
     });
 
@@ -171,10 +190,10 @@ PKGBUILDASSISTANT::PKGBUILDASSISTANT(QWidget *parent)
     /* Function Tab */
     // Init
     layout_functionTab = new QVBoxLayout(ui->tab_function);
-    group_setFakeDir = new QGroupBox("设置模拟目录");
-    group_operation = new QGroupBox("操作");
-    group_trees = new QGroupBox("文件树");
-    group_preview = new QGroupBox("命令预览");
+    group_setFakeDir = new QGroupBox("Set Fake Dir");
+    group_operation = new QGroupBox("Operations");
+    group_trees = new QGroupBox("Tree");
+    group_preview = new QGroupBox("Preview");
     le_fakeDirPath = new QLineEdit;
     le_archPath = new QLineEdit;
     tree_source = new QTextBrowser;
@@ -185,15 +204,15 @@ PKGBUILDASSISTANT::PKGBUILDASSISTANT(QWidget *parent)
     QVBoxLayout *vlay_setFakeDir = new QVBoxLayout(group_setFakeDir);
 
     QHBoxLayout *hlay_fakeDir = new QHBoxLayout;
-    QPushButton *btn_fakedir = new QPushButton("选择目录");
-    hlay_fakeDir->addWidget(new QLabel("模拟目录:"));
+    QPushButton *btn_fakedir = new QPushButton("Choose");
+    hlay_fakeDir->addWidget(new QLabel("Fake Dir:"));
     hlay_fakeDir->addWidget(le_fakeDirPath);
     hlay_fakeDir->addWidget(btn_fakedir);
     vlay_setFakeDir->addLayout(hlay_fakeDir);
 
     QHBoxLayout *hlay_debPath = new QHBoxLayout;
-    QPushButton *btn_debPath = new QPushButton("选择压缩包");
-    hlay_debPath->addWidget(new QLabel("压缩包目录:"));
+    QPushButton *btn_debPath = new QPushButton("Choose");
+    hlay_debPath->addWidget(new QLabel("Achive Path:"));
     hlay_debPath->addWidget(le_archPath);
     hlay_debPath->addWidget(btn_debPath);
 
@@ -203,12 +222,12 @@ PKGBUILDASSISTANT::PKGBUILDASSISTANT(QWidget *parent)
     layout_functionTab->addWidget(group_operation);
     QHBoxLayout *hlay_operation = new QHBoxLayout(group_operation);
 
-    QPushButton *btn_installFile = new QPushButton("拷贝文件");
-    QPushButton *btn_installDir = new QPushButton("拷贝文件夹");
-    QPushButton *btn_removeFile = new QPushButton("删除文件");
-    QPushButton *btn_removeDir = new QPushButton("删除文件夹");
-    QPushButton *btn_chmodFile = new QPushButton("更改文件权限");
-    QPushButton *btn_chmodDir = new QPushButton("更改文件夹权限");
+    QPushButton *btn_installFile = new QPushButton("Copy File");
+    QPushButton *btn_installDir = new QPushButton("Copy Dir");
+    QPushButton *btn_removeFile = new QPushButton("Delete File");
+    QPushButton *btn_removeDir = new QPushButton("Delete Dir");
+    QPushButton *btn_chmodFile = new QPushButton("Chmod File");
+    QPushButton *btn_chmodDir = new QPushButton("Chmod Dir");
 
     hlay_operation->addStretch();
     hlay_operation->addWidget(btn_installFile);
@@ -243,10 +262,10 @@ PKGBUILDASSISTANT::PKGBUILDASSISTANT(QWidget *parent)
     layout_functionTab->setStretchFactor(group_preview,1);
 
     connect(btn_fakedir, &QPushButton::clicked, [=](){
-        QString dir = QFileDialog::getExistingDirectory(this,"选择模拟文件夹");
+        QString dir = QFileDialog::getExistingDirectory(this,"Choose Fake Dir");
         if(dir.isEmpty())
         {
-            QMessageBox::critical(this,"错误","请选择模拟文件夹");
+            QMessageBox::critical(this,"Wrong!","Please choose a fake dir!");
         }
         else
         {
@@ -258,14 +277,14 @@ PKGBUILDASSISTANT::PKGBUILDASSISTANT(QWidget *parent)
     connect(btn_debPath, &QPushButton::clicked, [=](){
         if(le_fakeDirPath->text().isEmpty())
         {
-            QMessageBox::critical(this,"错误","请先选择模拟文件夹");
+            QMessageBox::critical(this,"Wrong!","Please choose a fake dir!");
         }
         else
         {
-            QString fileName = QFileDialog::getOpenFileName(this,"选择压缩包","","deb archive(*.deb);;tar archive(*.tar.gz)");
+            QString fileName = QFileDialog::getOpenFileName(this,"Choose an archive","","deb archive(*.deb);;tar archive(*.tar.gz)");
             if(fileName.isEmpty())
             {
-                QMessageBox::critical(this,"错误","请选择压缩包");
+                QMessageBox::critical(this,"Wrong!","Please choose an archive");
             }
             else
             {
@@ -290,7 +309,7 @@ PKGBUILDASSISTANT::PKGBUILDASSISTANT(QWidget *parent)
        }
        else
        {
-           QMessageBox::critical(this, "错误", "请先填写模拟目录");
+           QMessageBox::critical(this,"Wrong!","Please choose a fake dir!");
        }
 
 
@@ -309,7 +328,7 @@ PKGBUILDASSISTANT::PKGBUILDASSISTANT(QWidget *parent)
         }
         else
         {
-            QMessageBox::critical(this, "错误", "请先填写模拟目录");
+            QMessageBox::critical(this,"Wrong!","Please choose a fake dir!");
         }
 
     });
@@ -326,7 +345,7 @@ PKGBUILDASSISTANT::PKGBUILDASSISTANT(QWidget *parent)
         }
         else
         {
-            QMessageBox::critical(this, "错误", "请先填写模拟目录");
+            QMessageBox::critical(this,"Wrong!","Please choose a fake dir!");
         }
     });
 
@@ -341,7 +360,7 @@ PKGBUILDASSISTANT::PKGBUILDASSISTANT(QWidget *parent)
         }
         else
         {
-            QMessageBox::critical(this, "错误", "请先填写模拟目录");
+            QMessageBox::critical(this,"Wrong!","Please choose a fake dir!");
         }
     });
 
@@ -357,7 +376,7 @@ PKGBUILDASSISTANT::PKGBUILDASSISTANT(QWidget *parent)
         }
         else
         {
-            QMessageBox::critical(this, "错误", "请先填写模拟目录");
+            QMessageBox::critical(this,"Wrong!","Please choose a fake dir!");
         }
     });
 
@@ -373,7 +392,7 @@ PKGBUILDASSISTANT::PKGBUILDASSISTANT(QWidget *parent)
         }
         else
         {
-            QMessageBox::critical(this, "错误", "请先填写模拟目录");
+            QMessageBox::critical(this,"Wrong!","Please choose a fake dir!");
         }
     });
 
@@ -382,11 +401,11 @@ PKGBUILDASSISTANT::PKGBUILDASSISTANT(QWidget *parent)
     layout_createTab = new QVBoxLayout(ui->tab_create);
     le_savePath = new QLineEdit;
     le_savePreview = new QTextEdit;
-    group_savePreview = new QGroupBox("PKGBUILD预览");
+    group_savePreview = new QGroupBox("PKGBUILD Preview");
 
     QHBoxLayout *hlay_saveFile = new QHBoxLayout;
-    QPushButton *btn_saveFile = new QPushButton("选择路径");
-    hlay_saveFile->addWidget(new QLabel("保存文件路径:"));
+    QPushButton *btn_saveFile = new QPushButton("Choose");
+    hlay_saveFile->addWidget(new QLabel("File Save Dir:"));
     hlay_saveFile->addWidget(le_savePath);
     hlay_saveFile->addWidget(btn_saveFile);
     layout_createTab->addLayout(hlay_saveFile);
@@ -395,10 +414,13 @@ PKGBUILDASSISTANT::PKGBUILDASSISTANT(QWidget *parent)
     QVBoxLayout *vlay_savePrew = new QVBoxLayout(group_savePreview);
 
     QHBoxLayout *hlay_savePreviewBtn = new QHBoxLayout;
-    QPushButton *btn_prevPKG = new QPushButton("生成PKGBUILD");
-    QPushButton *btn_savePKG = new QPushButton("保存PKGBUILD");
+    QPushButton *btn_prevPKG = new QPushButton("Make PKGBUILD");
+    QPushButton *btn_checkPKG = new QPushButton("Check PKGBUILD");
+    QPushButton *btn_savePKG = new QPushButton("Save PKGBUILD");
     hlay_savePreviewBtn->addStretch();
     hlay_savePreviewBtn->addWidget(btn_prevPKG);
+    hlay_savePreviewBtn->addStretch();
+    hlay_savePreviewBtn->addWidget(btn_checkPKG);
     hlay_savePreviewBtn->addStretch();
     hlay_savePreviewBtn->addWidget(btn_savePKG);
     hlay_savePreviewBtn->addStretch();
@@ -410,10 +432,10 @@ PKGBUILDASSISTANT::PKGBUILDASSISTANT(QWidget *parent)
     vlay_savePrew->addLayout(hlay_savePreviewEdit);
 
     connect(btn_saveFile, &QPushButton::clicked, [=](){
-        QString fileName = QFileDialog::getSaveFileName(this,"选择PKGBUILD保存位置","","PKGBUILD(PKGBUILD)");
+        QString fileName = QFileDialog::getSaveFileName(this,"Choose a location to save PKGBUILD","","PKGBUILD(PKGBUILD)");
         if(fileName.isEmpty())
         {
-            QMessageBox::critical(this,"错误!","请选择PKGBUILD文件保存位置!");
+            QMessageBox::critical(this,"Wrong!","Please a location to save PKGBUILD!");
         }
         else
         {
@@ -426,7 +448,7 @@ PKGBUILDASSISTANT::PKGBUILDASSISTANT(QWidget *parent)
     connect(btn_savePKG, &QPushButton::clicked, [=](){
         if(le_savePath->text().isEmpty())
         {
-            QMessageBox::critical(this, "保存失败", "保存失败，请先选择PKGBUILD文件保存路径!");
+            QMessageBox::critical(this,"Wrong!","Please a location to save PKGBUILD!");
 
             return;
         }
@@ -438,7 +460,35 @@ PKGBUILDASSISTANT::PKGBUILDASSISTANT(QWidget *parent)
 
         file.close();
 
-        ui->statusbar->showMessage("PKGBUILD文件已保存",2000);
+        ui->statusbar->showMessage("PKGBUILD saved...",2000);
+    });
+
+    connect(btn_checkPKG, &QPushButton::clicked, [=](){
+        if(le_savePreview->toPlainText().isEmpty())
+        {
+            QMessageBox::critical(this,"Wrong!","Please fill out related information and make PKGBUILD！");
+
+            return;
+        }
+
+        if(le_savePath->text().isEmpty())
+        {
+            QMessageBox::critical(this,"Wrong!","Please a location to save PKGBUILD!");
+
+            return;
+        }
+
+        QFile file(le_savePath->text());
+        file.open(QFile::ReadWrite | QFile::Truncate);
+
+        file.write(le_savePreview->toPlainText().toUtf8());
+
+        file.close();
+
+        ui->statusbar->showMessage("PKGBUILD saved...",500);
+
+        checkFile();
+
     });
 
 
@@ -474,8 +524,22 @@ void PKGBUILDASSISTANT::scanSoFiles()
         table_depends->setItem(table_depends->rowCount()-1,0,itemName);
     }
 
-    ui->statusbar->showMessage(tr("目录便利完毕，共找到了%1个lib文件").arg(list_so.size()),2000);
+    ui->statusbar->showMessage(tr("Scanning finished, There totally are %1 libs").arg(list_so.size()),2000);
 
+}
+
+void PKGBUILDASSISTANT::insertPackageNames(QStringList pkgList)
+{
+    for(int i=0; i<list_so.size(); i++)
+    {
+
+        QTableWidgetItem* pkgNames = new QTableWidgetItem;
+
+        pkgNames->setText(pkgList.at(i));
+
+
+        table_depends->setItem(i,1,pkgNames);
+    }
 }
 
 QString PKGBUILDASSISTANT::scanPackageNames(QString filename)
@@ -508,16 +572,24 @@ void PKGBUILDASSISTANT::decompress(QString fileName)
     {
         qDebug()<<"tar.gz";
 
-        QProcess process;
-
         // decompress tar.gz file
-        process.start(tr("tar -zxvf %1 -C %2/src").arg(le_archPath->text()).arg(le_fakeDirPath->text()));
+        QThread *thread_decompress = new QThread;
 
-        process.waitForFinished();
+        DecompressThread *deTar = new DecompressThread;
+        deTar->setShell(QStringList()<<tr("tar -zxvf %1 -C %2/src").arg(le_archPath->text()).arg(le_fakeDirPath->text()));
+        deTar->moveToThread(thread_decompress);
 
-        qDebug()<<"Decompress finished";
+        // Start thread
+        connect(thread_decompress, &QThread::started, deTar, &DecompressThread::startWork);
+        // Destroy thread
+        connect(deTar, &DecompressThread::workFinished, this, &PKGBUILDASSISTANT::updateTree);
+        connect(deTar, &DecompressThread::workFinished, deTar,&DecompressThread::deleteLater);
+        connect(deTar, &DecompressThread::destroyed, thread_decompress, &QThread::quit);
+        connect(thread_decompress, &QThread::finished, thread_decompress, &QThread::deleteLater);
 
-        updateTree();   //update file trees
+        thread_decompress->start();
+
+        updateTree();
 
         return;
     }
@@ -526,23 +598,25 @@ void PKGBUILDASSISTANT::decompress(QString fileName)
     {
         qDebug()<<"deb";
 
-        QProcess process;
+        //QProcess process;
 
-        // first decompress .deb file
-        process.start(tr("ar -vx %1 --output=%2/src").arg(le_archPath->text()).arg(le_fakeDirPath->text()));
+        // first decompress .deb file        
+        QThread *thread_decompress = new QThread;
+        DecompressThread *deDeb = new DecompressThread;
+        deDeb->setShell(QStringList()<<tr("ar -vx %1 --output=%2/src").arg(le_archPath->text()).arg(le_fakeDirPath->text())
+                        <<tr("tar -xvJf %1/src/data.tar.xz -C %2/pkg").arg(le_fakeDirPath->text()).arg(le_fakeDirPath->text()));
+        deDeb->moveToThread(thread_decompress);
 
-        process.waitForStarted();
+        // Start thread
+        connect(thread_decompress, &QThread::started, deDeb, &DecompressThread::startWork);
 
-        qDebug()<<"deb decomprocessed";
+        // Destroy thread
+        connect(deDeb, &DecompressThread::workFinished, this, &PKGBUILDASSISTANT::updateTree);
+        connect(deDeb, &DecompressThread::workFinished, deDeb,&DecompressThread::deleteLater);
+        connect(deDeb, &DecompressThread::destroyed, thread_decompress, &QThread::quit);
+        connect(thread_decompress, &QThread::finished, thread_decompress, &QThread::deleteLater);
 
-        QProcess process1;
-
-        // then decompress data.tar.xz
-        process1.start(tr("tar -xvJf %1/src/data.tar.xz -C %2/pkg").arg(le_fakeDirPath->text()).arg(le_fakeDirPath->text()));
-
-        process1.waitForFinished();
-
-        qDebug()<<"data.tar.xz decomprocessed";
+        thread_decompress->start();
 
         updateTree();  //update file trees
 
@@ -963,7 +1037,7 @@ void PKGBUILDASSISTANT::createFile()
             || le_source->toPlainText().isEmpty() || le_sum->toPlainText().isEmpty() || le_maintainerName->text().isEmpty()
             || le_maintainerEmail->text().isEmpty() || le_provides->text().isEmpty())
     {
-        QMessageBox::critical(this, "生成失败", "生成失败，一项或多项关键信息未填写！");
+        QMessageBox::critical(this, "Make Error", "Can't make PKGBUILD, as missing some necessary information!");
         return;
     }
 
@@ -1101,4 +1175,67 @@ void PKGBUILDASSISTANT::createFile()
 
 }
 
+void PKGBUILDASSISTANT::checkFile()
+{
+    ui->statusbar->showMessage("Checking PKGBUILD...");
 
+    /* /usr/bin/ppp */
+    QString currentDirName = le_savePath->text().mid(0, le_savePath->text().lastIndexOf('/'));
+    QDir currentDir(currentDirName);
+    qDebug()<<"currentDirName:"<<currentDirName;
+
+    if(!currentDir.exists("PKGBUILD"))
+    {
+        QMessageBox::critical(this,"Check Error","Can't check PKGBUILD!");
+        return;
+    }
+
+    // Run namcap
+    QProcess namcap;
+    namcap.setWorkingDirectory(currentDirName);
+    namcap.start("namcap -m PKGBUILD");
+
+    namcap.waitForFinished();
+
+    qDebug()<<"namcap";
+    QByteArray retBuf = namcap.readAll();
+    QString ret(retBuf);
+    qDebug()<<retBuf.data();
+
+    // Loop Output
+    int errorNum = 0; //count errors
+    int warningNum = 0; //count warnings
+
+    int countReturn = ret.count('\n');
+    qDebug()<<"countReturn:"<<countReturn;
+    for(int i=0; i<countReturn; ++i)
+    {
+        QString currentStr = ret.section("\n",i,i);
+        qDebug()<<"currentStr:"<<currentStr;
+        QString type = currentStr.section(" ",2,2);
+        qDebug()<<"type:"<<type;
+        if(type=="E:")
+        {
+            errorNum++;
+
+            continue;
+        }
+        if(type=="W:")
+        {
+            warningNum++;
+
+            continue;
+        }
+    }
+
+
+    ui->statusbar->showMessage(tr("PKGBUILD checked. There are %1 ERRORS and %2 WARNINGS.").arg(errorNum).arg(warningNum));
+
+    QMessageBox::information(this, "PKGBUID Checked", tr("PKGBUILD checked.\nThere are %1 ERRORS and %2 WARNINGS:\n%3").arg(errorNum).arg(warningNum).arg(ret));
+
+}
+
+void PKGBUILDASSISTANT::checkPkg()
+{
+
+}

@@ -21,36 +21,36 @@
        <enum>QTabWidget::West</enum>
       </property>
       <property name="currentIndex">
-       <number>4</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tab_baseinfo">
        <attribute name="title">
-        <string>基础信息</string>
+        <string>Base</string>
        </attribute>
       </widget>
       <widget class="QWidget" name="tab_source">
        <attribute name="title">
-        <string>源</string>
+        <string>Source</string>
        </attribute>
       </widget>
       <widget class="QWidget" name="tab_relations">
        <attribute name="title">
-        <string>相关性</string>
+        <string>Relations</string>
        </attribute>
       </widget>
       <widget class="QWidget" name="tab_depends">
        <attribute name="title">
-        <string>依赖</string>
+        <string>Depends</string>
        </attribute>
       </widget>
       <widget class="QWidget" name="tab_function">
        <attribute name="title">
-        <string>函数</string>
+        <string>Function</string>
        </attribute>
       </widget>
       <widget class="QWidget" name="tab_create">
        <attribute name="title">
-        <string>创建</string>
+        <string>Make</string>
        </attribute>
       </widget>
      </widget>

@@ -16,16 +16,20 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    decompressthread.cpp \
     dialogfilechmod.cpp \
     dialogfilecopy.cpp \
     dialogfiledelete.cpp \
     main.cpp \
+    packagequerythread.cpp \
     pkgbuildassistant.cpp
 
 HEADERS += \
+    decompressthread.h \
     dialogfilechmod.h \
     dialogfilecopy.h \
     dialogfiledelete.h \
+    packagequerythread.h \
     pkgbuildassistant.h
 
 FORMS += \

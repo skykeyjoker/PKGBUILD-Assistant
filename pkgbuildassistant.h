@@ -25,6 +25,8 @@
 #include "dialogfilecopy.h"
 #include "dialogfiledelete.h"
 #include "dialogfilechmod.h"
+#include "decompressthread.h"
+#include "packagequerythread.h"
 
 
 QT_BEGIN_NAMESPACE
@@ -101,9 +103,13 @@ public:
     bool DeleteDirectory(const QString &path);
     void createFile();
 
+    void checkFile();
+
+    void checkPkg();
+
 public slots:
     void slotAddOperation(QString operation);
-
+    void insertPackageNames(QStringList pkgNameList);
 private:
     Ui::PKGBUILDASSISTANT *ui;
 };
