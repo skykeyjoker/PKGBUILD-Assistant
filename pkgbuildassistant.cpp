@@ -432,7 +432,7 @@ PKGBUILDASSISTANT::PKGBUILDASSISTANT(QWidget *parent)
         }
 
         QFile file(le_savePath->text());
-        file.open(QFile::ReadWrite);
+        file.open(QFile::ReadWrite | QFile::Truncate);
 
         file.write(le_savePreview->toPlainText().toUtf8());
 
@@ -988,7 +988,8 @@ void PKGBUILDASSISTANT::createFile()
     pkgBuf.append(tr("provides=(\"%1\")\n").arg(le_provides->text()));
 
     // Conflicts
-    pkgBuf.append(tr("conflicts=(\"%1\")\n").arg(le_conflicts->text()));
+    if(!le_conflicts->text().isEmpty())
+        pkgBuf.append(tr("conflicts=(\"%1\")\n").arg(le_conflicts->text()));
 
     // Url
     pkgBuf.append(tr("url=\'%1\'\n").arg(le_url->text()));
@@ -1006,25 +1007,28 @@ void PKGBUILDASSISTANT::createFile()
     qDebug()<<count;
     for(int i=0; i<count; ++i)
     {
-        depensStr += tr("\'%1\' ").arg(str.section("\n",i,i));
+        depensStr += tr("\'%1\' ").arg(str.section("\n",i,i).trimmed());
     }
     depensStr = depensStr.trimmed();  // trimmed
 
     pkgBuf.append(tr("depends=(%1)\n").arg(depensStr));
 
     // Optdepends
-    count = 0;
-    str = le_optdepends->toPlainText();
-    QString optdependsStr;
-
-    count = str.count("\n")+1;
-    for(int i=0; i<count; ++i)
+    if(!le_optdepends->toPlainText().isEmpty())
     {
-        optdependsStr += tr("\'%1\' ").arg(str.section("\n",i,i));
-    }
-    optdependsStr = optdependsStr.trimmed();  // trimmed
+        count = 0;
+        str = le_optdepends->toPlainText();
+        QString optdependsStr;
 
-    pkgBuf.append(tr("optdepends=(%1)\n").arg(optdependsStr));
+        count = str.count("\n")+1;
+        for(int i=0; i<count; ++i)
+        {
+            optdependsStr += tr("\'%1\' ").arg(str.section("\n",i,i).trimmed());
+        }
+        optdependsStr = optdependsStr.trimmed();  // trimmed
+
+        pkgBuf.append(tr("optdepends=(%1)\n").arg(optdependsStr));
+    }
 
     // Source
     count = 0;
@@ -1034,7 +1038,7 @@ void PKGBUILDASSISTANT::createFile()
     count = str.count("\n")+1;
     for(int i=0; i<count; ++i)
     {
-        sourceStr += tr("\"%1\"\n").arg(str.section("\n",i,i));
+        sourceStr += tr("\"%1\"\n").arg(str.section("\n",i,i).trimmed());
     }
     pkgBuf.append(tr("source=(%1)\n").arg(sourceStr));
 
@@ -1046,13 +1050,13 @@ void PKGBUILDASSISTANT::createFile()
     count = str.count("\n")+1;
     for(int i = 0; i<count; ++i)
     {
-        if(str.section("\n",i,i) == "SKIP")
+        if(str.section("\n",i,i).trimmed() == "SKIP")
         {
             sumStr += "SKIP\n";
         }
         else
         {
-            sumStr += tr("\'%1\'\n").arg(str.section("\n",i,i));
+            sumStr += tr("\'%1\'\n").arg(str.section("\n",i,i).trimmed());
         }
     }
 
