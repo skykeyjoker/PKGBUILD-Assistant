@@ -10,6 +10,8 @@
 #include <QComboBox>
 #include <QLabel>
 #include <QMessageBox>
+#include <QCheckBox>
+#include <QDebug>
 
 class DialogFileChmod : public QDialog
 {
@@ -24,6 +26,8 @@ public:
     QLineEdit *le_fileName;
 
     QLineEdit *le_mod;
+
+    QCheckBox *check_allFiles;
 
 
 private:

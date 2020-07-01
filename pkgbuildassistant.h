@@ -20,6 +20,7 @@
 #include <QMessageBox>
 #include <QTextBrowser>
 #include <QGroupBox>
+#include <QComboBox>
 #include <QDebug>
 
 #include "dialogfilecopy.h"
@@ -81,11 +82,13 @@ public:
     QGroupBox *group_operation;
     QGroupBox *group_trees;
     QGroupBox *group_preview;
+    QComboBox *combox_treeLeft;
+    QComboBox *combox_treeRight;
     QLineEdit *le_fakeDirPath;
     QLineEdit *le_archPath;
     QTextEdit *le_preview;
-    QTextBrowser *tree_source;
-    QTextBrowser *tree_pkg;
+    QTextBrowser *tree_left;
+    QTextBrowser *tree_right;
 
 
     QVBoxLayout *layout_createTab;

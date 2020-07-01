@@ -196,9 +196,11 @@ PKGBUILDASSISTANT::PKGBUILDASSISTANT(QWidget *parent)
     group_preview = new QGroupBox("Preview");
     le_fakeDirPath = new QLineEdit;
     le_archPath = new QLineEdit;
-    tree_source = new QTextBrowser;
-    tree_pkg = new QTextBrowser;
+    tree_left = new QTextBrowser;
+    tree_right = new QTextBrowser;
     le_preview = new QTextEdit;
+    combox_treeLeft = new QComboBox;
+    combox_treeRight = new QComboBox;
 
     layout_functionTab->addWidget(group_setFakeDir);
     QVBoxLayout *vlay_setFakeDir = new QVBoxLayout(group_setFakeDir);
@@ -246,10 +248,31 @@ PKGBUILDASSISTANT::PKGBUILDASSISTANT(QWidget *parent)
 
 
     layout_functionTab->addWidget(group_trees);
-    QHBoxLayout *hlay_trees = new QHBoxLayout(group_trees);
+    QVBoxLayout *vlay_trees = new QVBoxLayout(group_trees);
 
-    hlay_trees->addWidget(tree_source);
-    hlay_trees->addWidget(tree_pkg);
+    QHBoxLayout *hlay_treesComboxs = new QHBoxLayout;
+    hlay_treesComboxs->addStretch();
+    hlay_treesComboxs->addWidget(new QLabel("Left Tree:"));
+    hlay_treesComboxs->addWidget(combox_treeLeft);
+    hlay_treesComboxs->addStretch();
+    hlay_treesComboxs->addWidget(new QLabel("Right Tree:"));
+    hlay_treesComboxs->addWidget(combox_treeRight);
+    hlay_treesComboxs->addStretch();
+
+    combox_treeLeft->addItem("${srcdir}");
+    combox_treeLeft->addItem("${pkgdir}");
+    combox_treeRight->addItem("${srcdir}");
+    combox_treeRight->addItem("${pkgdir}");
+
+    combox_treeLeft->setCurrentIndex(0);
+    combox_treeRight->setCurrentIndex(1);
+
+    QHBoxLayout *hlay_trees = new QHBoxLayout;
+    hlay_trees->addWidget(tree_left);
+    hlay_trees->addWidget(tree_right);
+
+    vlay_trees->addLayout(hlay_treesComboxs);
+    vlay_trees->addLayout(hlay_trees);
 
     layout_functionTab->addWidget(group_preview);
     QVBoxLayout *vlay_preview = new QVBoxLayout(group_preview);
@@ -394,6 +417,14 @@ PKGBUILDASSISTANT::PKGBUILDASSISTANT(QWidget *parent)
         {
             QMessageBox::critical(this,"Wrong!","Please choose a fake dir!");
         }
+    });
+
+    void (QComboBox::*pCurrentIndexChanged)(int) = &QComboBox::currentIndexChanged;
+    connect(combox_treeLeft, pCurrentIndexChanged, [=](int index){
+        updateTree();
+    });
+    connect(combox_treeRight, pCurrentIndexChanged, [=](int index){
+        updateTree();
     });
 
 
@@ -655,23 +686,32 @@ void PKGBUILDASSISTANT::updateTree()
 
     QProcess process_src;
     QProcess process_pkg;
-    QByteArray buf;
+    QByteArray bufPkg;
+    QByteArray bufSrc;
 
     process_src.start(tr("tree %1").arg(le_fakeDirPath->text()+"/src"));
 
     process_src.waitForFinished();
 
-    buf = process_src.readAllStandardOutput();
+    bufSrc = process_src.readAllStandardOutput();
 
-    tree_source->setText(buf);
 
     process_pkg.start(tr("tree %1").arg(le_fakeDirPath->text()+"/pkg"));
 
     process_pkg.waitForFinished();
 
-    buf = process_pkg.readAllStandardOutput();
+    bufPkg = process_pkg.readAllStandardOutput();
 
-    tree_pkg->setText(buf);
+    if(combox_treeLeft->currentText()=="${srcdir}")
+        tree_left->setText(bufSrc);
+    else
+        tree_left->setText(bufPkg);
+
+    if(combox_treeRight->currentText()=="${srcdir}")
+        tree_right->setText(bufSrc);
+    else
+        tree_right->setText(bufPkg);
+
 }
 
 void PKGBUILDASSISTANT::slotAddOperation(QString operation)
@@ -1451,6 +1491,17 @@ void PKGBUILDASSISTANT::checkPkg()
             qDebug()<<newDependsStr;
 
             le_depends->setText(newDependsStr);
+
+            createFile();
+
+            QFile file(le_savePath->text());
+            file.open(QFile::ReadWrite | QFile::Truncate);
+
+            file.write(le_savePreview->toPlainText().toUtf8());
+
+            file.close();
+
+            ui->statusbar->showMessage("PKGBUILD saved...",500);
         }
     }
 

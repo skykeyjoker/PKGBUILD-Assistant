@@ -12,7 +12,7 @@ DialogFileCopy::DialogFileCopy(QWidget *parent, int mode) : QDialog(parent), _mo
     QHBoxLayout *hlay_destination = new QHBoxLayout;
     QHBoxLayout *hlay_btns = new QHBoxLayout;
 
-    check_binary = new QCheckBox("可执行文件");
+    check_binary = new QCheckBox("Executable file");
 
     mainLay->addWidget(check_binary);
     mainLay->addLayout(hlay_source);
@@ -24,15 +24,15 @@ DialogFileCopy::DialogFileCopy(QWidget *parent, int mode) : QDialog(parent), _mo
     le_source = new QLineEdit;
     le_destination = new QLineEdit;
 
-    QPushButton *btn_cancel = new QPushButton("取消");
-    QPushButton *btn_apply = new QPushButton("确定");
+    QPushButton *btn_cancel = new QPushButton("Cancel");
+    QPushButton *btn_apply = new QPushButton("Apply");
 
-    hlay_source->addWidget(new QLabel("源路径:"));
+    hlay_source->addWidget(new QLabel("Source Path:"));
     hlay_source->addWidget(combox_source);
     hlay_source->addWidget(le_source);
 
 
-    hlay_destination->addWidget(new QLabel("目标路径:"));
+    hlay_destination->addWidget(new QLabel("Destination Path:"));
     hlay_destination->addWidget(combox_destination);
     hlay_destination->addWidget(le_destination);
 
@@ -56,24 +56,24 @@ DialogFileCopy::DialogFileCopy(QWidget *parent, int mode) : QDialog(parent), _mo
 
     check_binary->setChecked(false);
 
-    if(_mode==0)  //文件
+    if(_mode==0)  //File
     {
-        setWindowTitle("复制文件");
+        setWindowTitle("Copy File");
 
         check_binary->setCheckable(true);
 
     }
 
-    if(_mode==1) //文件夹
+    if(_mode==1) //Dir
     {
-        setWindowTitle("复制文件夹");
+        setWindowTitle("Copy Dir");
 
         check_binary->setCheckable(false);
     }
 
 
     connect(btn_cancel, &QPushButton::clicked, [=](){
-        int ret = QMessageBox::question(this, "确认退出", "确认退出文件拷贝吗？");
+        int ret = QMessageBox::question(this, "Confirm", "Are you sure to exit?");
 
         if(ret == QMessageBox::Yes)
         {
@@ -84,7 +84,7 @@ DialogFileCopy::DialogFileCopy(QWidget *parent, int mode) : QDialog(parent), _mo
     connect(btn_apply, &QPushButton::clicked, [=](){
         if(le_source->text()=="/" || le_destination->text()=="/")
         {
-            QMessageBox::critical(this, "错误！", "请填写源路径和目标路径！");
+            QMessageBox::critical(this, "Error", "Please input the source and target path!");
 
             return;
         }

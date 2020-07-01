@@ -16,7 +16,7 @@ DialogFileDelete::DialogFileDelete(QWidget *parent, int mode) : QDialog(parent),
     mainLay->addLayout(lay_edit);
     mainLay->addLayout(lay_btns);
 
-    lay_edit->addWidget(new QLabel("目标路径:"));
+    lay_edit->addWidget(new QLabel("Target Path:"));
     lay_edit->addWidget(combox);
     lay_edit->addWidget(le_fileName);
 
@@ -24,8 +24,8 @@ DialogFileDelete::DialogFileDelete(QWidget *parent, int mode) : QDialog(parent),
     combox->addItem("${pkgdir}");
     combox->setCurrentIndex(1);
 
-    QPushButton *btn_cancel = new QPushButton("取消");
-    QPushButton *btn_apply = new QPushButton("确定");
+    QPushButton *btn_cancel = new QPushButton("Cancel");
+    QPushButton *btn_apply = new QPushButton("Apply");
 
     lay_btns->addStretch();
     lay_btns->addWidget(btn_cancel);
@@ -38,17 +38,17 @@ DialogFileDelete::DialogFileDelete(QWidget *parent, int mode) : QDialog(parent),
     //file
     if(_mode == 0)
     {
-        setWindowTitle("删除文件");
+        setWindowTitle("Delete File");
     }
 
     //dir
     if(_mode == 1)
     {
-        setWindowTitle("删除文件夹");
+        setWindowTitle("Delete Dir");
     }
 
     connect(btn_cancel, &QPushButton::clicked, [=](){
-        int ret = QMessageBox::question(this, "确认退出", "确认退出文件删除吗？");
+        int ret = QMessageBox::question(this, "Confirming", "Are you sure to exit?");
 
         if(ret == QMessageBox::Yes)
         {
@@ -59,7 +59,7 @@ DialogFileDelete::DialogFileDelete(QWidget *parent, int mode) : QDialog(parent),
     connect(btn_apply, &QPushButton::clicked, [=](){
         if(le_fileName->text()=="/")
         {
-            QMessageBox::critical(this, "错误！", "请填写目标路径！");
+            QMessageBox::critical(this, "Error", "Please input the target path!");
 
             return;
         }

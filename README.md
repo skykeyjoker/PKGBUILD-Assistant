@@ -32,6 +32,12 @@ PKGBUILD-Assistant can simulate the operation of `Package()` function in **speci
 
 
 
+### PKGBUILD and generated software package validity Check
+
+PKGBUILD-Assistant can call namcap to check the validity of PKGBUILD and generated package. It is worth mentioning that when detecting the generated package, PKGBUILD-Assistant can remind the user whether to delete the dependency marked by namcap as **dependency-not-needed** (unneeded dependency).
+
+
+
 ## Related Links:
 
 * [Arch Wiki: PKGBUILD](https://wiki.archlinux.org/index.php/PKGBUILD)
@@ -80,6 +86,12 @@ PKGBUILD-Assistant可以通过扫描**指定目录**下的lib文件，调用Shel
 ### Package()函数实现
 
 PKGBUILD-Assistant可以在**指定目录**模拟`Package()`函数操作，如拷贝文件、文件夹，删除文件文件夹等。PKGBUILD-Assistant `Package()`函数实现版块**实时**维护了`${srcdir}`与`${pkgdir}`两个*虚拟目录树结构*。通过参照虚拟目录树结构，使用者能够比较直观地编写`Package()`函数内容。
+
+
+
+### PKGBUILD与生成包合法性检测
+
+PKGBUILD-Assistant可以调用namcap对PKGBUILD和生成包进行合法性检测。值得一提的是，对生成包进行检测时，PKGBUILD-Assistant可提醒用户是否删除被namcap标记为**dependency-not-needed**的依赖（即不需要的依赖）。
 
 
 
