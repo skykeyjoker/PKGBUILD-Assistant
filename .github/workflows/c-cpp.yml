@@ -19,7 +19,7 @@ jobs:
         host: 'windows'
         arch: 'win64_msvc2017_64'
     - name: qmake
-      run: qmake .
+      run: qmake
     - name: make
       run: make
     - name: make check
