@@ -7,6 +7,8 @@ PKGBUILDASSISTANT::PKGBUILDASSISTANT(QWidget *parent)
 {
     ui->setupUi(this);
 
+    qDebug()<<"start";
+
     setWindowIcon(QIcon(":/ico.png"));
 
     ui->tabWidget->setCurrentIndex(0);
