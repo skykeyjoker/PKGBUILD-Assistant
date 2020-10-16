@@ -19,9 +19,9 @@ jobs:
       uses: jurplel/install-qt-action@v2.9.0
       with:
         host: 'windows'
-        arch: 'win64_msvc2017_64'
+        arch: 'win64_mingw81'
     - name: qmake
-      run: qmake
+      run: qmake .
     - name: make
       run: make
     - name: make check
